@@ -1,57 +1,16 @@
-# Ant Design Pro
+# 数字灯塔-API开放平台（前端）
 
-This project is initialized with [Ant Design Pro](https://pro.ant.design). Follow is the quick guide for how to use.
+提供 API 接口供开发者调用的平台，基于 Spring Boot 后端 + React 前端的全栈微服务项目
 
-## Environment Prepare
+后端地址：[数字灯塔-API开放平台（后端）](https://github.com/null920/lightHouse-api-backend)
 
-Install `node_modules`:
+## 技术栈
 
-```bash
-npm install
-```
+* React
+* Ant Design Pro
+* Ant Design & Procomponents 组件库
+* Umi4
+* OpenAPI
+* 数据可视化
 
-or
-
-```bash
-yarn
-```
-
-## Provided Scripts
-
-Ant Design Pro provides some useful script to help you quick start and build with web project, code style check and test.
-
-Scripts provided in `package.json`. It's safe to modify or add additional script:
-
-### Start project
-
-```bash
-npm start
-```
-
-### Build project
-
-```bash
-npm run build
-```
-
-### Check code style
-
-```bash
-npm run lint
-```
-
-You can also use script to auto fix some lint error:
-
-```bash
-npm run lint:fix
-```
-
-### Test code
-
-```bash
-npm test
-```
-
-## More
-
-You can view full document on our [official website](https://pro.ant.design). And welcome any feedback in our [github](https://github.com/ant-design/ant-design-pro).
+## 快速开始

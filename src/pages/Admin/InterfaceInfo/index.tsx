@@ -1,24 +1,29 @@
-import CreateModal from '@/pages/InterfaceInfo/components/CreateModal';
-import UpdateModal from '@/pages/InterfaceInfo/components/UpdateModal';
+import CreateModal from '@/pages/Admin/InterfaceInfo/components/CreateModal';
+import UpdateModal from '@/pages/Admin/InterfaceInfo/components/UpdateModal';
 import {
   addInterfaceInfoUsingPost,
   deleteInterfaceInfoUsingPost,
   listInterfaceInfoByPageUsingGet,
+  offlineInterfaceInfoUsingPost,
+  onlineInterfaceInfoUsingPost,
   updateInterfaceInfoUsingPost,
 } from '@/services/lightHouse-api-backend/interfaceInfoController';
 import { PlusOutlined } from '@ant-design/icons';
-import type { ActionType, ProColumns, ProDescriptionsItemProps } from '@ant-design/pro-components';
 import {
+  ActionType,
   FooterToolbar,
   ModalForm,
   PageContainer,
+  ProColumns,
   ProDescriptions,
+  ProDescriptionsItemProps,
   ProFormText,
   ProFormTextArea,
   ProTable,
+  TableDropdown,
 } from '@ant-design/pro-components';
 import '@umijs/max';
-import { Button, Drawer, Modal, message } from 'antd';
+import { Button, Drawer, Modal, Space, Tag, message } from 'antd';
 import type { SortOrder } from 'antd/lib/table/interface';
 import React, { useRef, useState } from 'react';
 
@@ -40,7 +45,7 @@ const TableList: React.FC = () => {
 
   /**
    * @en-US Add node
-   * @zh-CN 添加节点
+   * @zh-CN 添加接口
    * @param fields
    */
   const handleAdd = async (fields: API.InterfaceInfo) => {
@@ -62,7 +67,7 @@ const TableList: React.FC = () => {
 
   /**
    * @en-US Update node
-   * @zh-CN 更新节点
+   * @zh-CN 更新接口
    *
    * @param fields
    */
@@ -84,9 +89,9 @@ const TableList: React.FC = () => {
 
   /**
    *  Delete node
-   * @zh-CN 删除节点
+   * @zh-CN 删除接口
    *
-   * @param selectedRows
+   * @param record
    */
   const handleRemove = async (record: API.InterfaceInfo) => {
     const hide = message.loading('正在删除');
@@ -105,6 +110,78 @@ const TableList: React.FC = () => {
       return false;
     }
   };
+
+  /**
+   *  Delete node
+   * @zh-CN 发布接口
+   *
+   * @param record
+   */
+  const handleOnline = async (record: API.IdRequest) => {
+    const hide = message.loading('发布中');
+    if (!record) return true;
+    try {
+      await onlineInterfaceInfoUsingPost({
+        id: record.id,
+      });
+      hide();
+      message.success('发布成功');
+      actionRef.current?.reload();
+      return true;
+    } catch (error: any) {
+      hide();
+      message.error('发布失败，' + error.message);
+      return false;
+    }
+  };
+
+  /**
+   *  Delete node
+   * @zh-CN 下线接口
+   *
+   * @param record
+   */
+  const handleOffline = async (record: API.IdRequest) => {
+    const hide = message.loading('下线中');
+    if (!record) return true;
+    try {
+      await offlineInterfaceInfoUsingPost({
+        id: record.id,
+      });
+      hide();
+      message.success('下线成功');
+      actionRef.current?.reload();
+      return true;
+    } catch (error: any) {
+      hide();
+      message.error('下线失败，' + error.message);
+      return false;
+    }
+  };
+
+  /**
+   * 根据请求方法名获取标签颜色
+   * @param method 请求方法
+   */
+  function getTagColor(method: string | undefined) {
+    switch (method) {
+      case 'GET':
+        return 'green';
+        break;
+      case 'POST':
+        return 'blue';
+        break;
+      case 'PUT':
+        return 'orange';
+        break;
+      case 'DELETE':
+        return 'red';
+        break;
+      default:
+        return 'default';
+        break;
+    }
+  }
 
   /**
    * @en-US International configuration
@@ -163,6 +240,16 @@ const TableList: React.FC = () => {
           text: 'DELETE',
         },
       },
+      renderFormItem: (_, { defaultRender }) => {
+        return defaultRender(_);
+      },
+      render: (_, record) => (
+        <Space>
+          <Tag color={getTagColor(record.method)} key={record.method}>
+            {record.method}
+          </Tag>
+        </Space>
+      ),
     },
     {
       title: '请求头',
@@ -220,8 +307,28 @@ const TableList: React.FC = () => {
       valueType: 'option',
       align: 'center',
       render: (_, record) => [
+        record.status === 0 && (
+          <a
+            key="online"
+            onClick={() => {
+              handleOnline(record);
+            }}
+          >
+            发布
+          </a>
+        ),
+        record.status === 1 && (
+          <a
+            key="offline"
+            onClick={() => {
+              handleOffline(record);
+            }}
+          >
+            下线
+          </a>
+        ),
         <a
-          key="config"
+          key="update"
           onClick={() => {
             handleUpdateModalOpen(true);
             setCurrentRow(record);
@@ -229,13 +336,10 @@ const TableList: React.FC = () => {
         >
           修改
         </a>,
-        // <a key="subscribeAlert" href="https://procomponents.ant.design/">
-        //   订阅警报
-        // </a>,
-        <a
-          key="config"
-          onClick={() => {
-            //弹气泡确认框
+        <TableDropdown
+          key="actionGroup"
+          onSelect={() =>
+            //弹确认框
             Modal.confirm({
               title: '确认删除',
               content: '确定要删除该接口吗？',
@@ -246,11 +350,10 @@ const TableList: React.FC = () => {
               onCancel() {
                 return false;
               },
-            });
-          }}
-        >
-          删除
-        </a>,
+            })
+          }
+          menus={[{ key: 'delete', name: '删除' }]}
+        />,
       ],
     },
   ];
