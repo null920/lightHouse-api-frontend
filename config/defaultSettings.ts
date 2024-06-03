@@ -15,6 +15,7 @@ const Settings: ProLayoutProps & {
   fixedHeader: false,
   fixSiderbar: true,
   colorWeak: false,
+  footerRender: false,
   title: '数字灯塔-API开放平台',
   pwa: true,
   logo: 'https://cdn.ipfsscan.io/ipfs/QmRtZERHS1Ro8ms34VGyHDHox9kEVXW8WcZtfCp4jJpJfm?filename=IcRoundApi.svg',

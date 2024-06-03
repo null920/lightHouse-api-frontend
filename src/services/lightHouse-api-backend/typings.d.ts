@@ -11,6 +11,12 @@ declare namespace API {
     message?: string;
   };
 
+  type BaseResponseInterfaceInfo_ = {
+    code?: number;
+    data?: InterfaceInfo;
+    message?: string;
+  };
+
   type BaseResponseLoginUserVO_ = {
     code?: number;
     data?: LoginUserVO;
@@ -20,6 +26,12 @@ declare namespace API {
   type BaseResponseLong_ = {
     code?: number;
     data?: number;
+    message?: string;
+  };
+
+  type BaseResponseObject_ = {
+    code?: number;
+    data?: Record<string, any>;
     message?: string;
   };
 
@@ -92,6 +104,11 @@ declare namespace API {
     id?: number;
   };
 
+  type getInterfaceInfoByIdUsingGETParams = {
+    /** id */
+    id?: number;
+  };
+
   type getPostVOByIdUsingGETParams = {
     /** id */
     id?: number;
@@ -119,6 +136,7 @@ declare namespace API {
     method?: string;
     name?: string;
     requestHeader?: string;
+    requestParams?: string;
     responseHeader?: string;
     status?: number;
     updateTime?: string;
@@ -131,25 +149,15 @@ declare namespace API {
     method?: string;
     name?: string;
     requestHeader?: string;
+    requestParams?: string;
     responseHeader?: string;
     url?: string;
     userId?: number;
   };
 
-  type InterfaceInfoQueryRequest = {
-    current?: number;
-    description?: string;
+  type InterfaceInfoInvokeRequest = {
     id?: number;
-    method?: string;
-    name?: string;
-    pageSize?: number;
-    requestHeader?: string;
-    responseHeader?: string;
-    sortField?: string;
-    sortOrder?: string;
-    status?: number;
-    url?: string;
-    userId?: number;
+    userRequestParams?: string;
   };
 
   type InterfaceInfoUpdateRequest = {
@@ -158,6 +166,7 @@ declare namespace API {
     method?: string;
     name?: string;
     requestHeader?: string;
+    requestParams?: string;
     responseHeader?: string;
     status?: number;
     url?: string;
@@ -171,6 +180,7 @@ declare namespace API {
     name?: string;
     pageSize?: number;
     requestHeader?: string;
+    requestParams?: string;
     responseHeader?: string;
     sortField?: string;
     sortOrder?: string;
@@ -345,10 +355,12 @@ declare namespace API {
   };
 
   type User = {
+    accessKey?: string;
     createTime?: string;
     deleted?: number;
     id?: number;
     mpOpenId?: string;
+    secretKey?: string;
     unionId?: string;
     updateTime?: string;
     userAccount?: string;
