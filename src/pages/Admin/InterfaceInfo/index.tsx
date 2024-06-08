@@ -408,6 +408,9 @@ const TableList: React.FC = () => {
           }
         }}
         columns={columns}
+        //解决表格内容过长
+        scroll={{ x: true }}
+        pagination={false}
         rowSelection={{
           onChange: (_, selectedRows) => {
             setSelectedRows(selectedRows);

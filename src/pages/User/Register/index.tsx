@@ -1,15 +1,9 @@
-import { Footer } from '@/components';
-import { userLoginUsingPost } from '@/services/lightHouse-api-backend/userController';
-import {
-  AlipayCircleOutlined,
-  LockOutlined,
-  TaobaoCircleOutlined,
-  UserOutlined,
-  WeiboCircleOutlined,
-} from '@ant-design/icons';
+import Footer from '@/components/Footer';
+import { userRegisterUsingPost } from '@/services/lightHouse-api-backend/userController';
+import { Helmet, Link } from '@@/exports';
 import { LoginForm, ProFormText } from '@ant-design/pro-components';
-import { Helmet, Link, history, useModel } from '@umijs/max';
-import { Alert, Tabs, message } from 'antd';
+import { history } from '@umijs/max';
+import { Tabs, message } from 'antd';
 import { createStyles } from 'antd-style';
 import React, { useState } from 'react';
 import Settings from '../../../../config/defaultSettings';
@@ -49,57 +43,39 @@ const useStyles = createStyles(({ token }) => {
     },
   };
 });
-const ActionIcons = () => {
-  const { styles } = useStyles();
-  return (
-    <>
-      <AlipayCircleOutlined key="AlipayCircleOutlined" className={styles.action} />
-      <TaobaoCircleOutlined key="TaobaoCircleOutlined" className={styles.action} />
-      <WeiboCircleOutlined key="WeiboCircleOutlined" className={styles.action} />
-    </>
-  );
-};
+
 const Lang = () => {
   const { styles } = useStyles();
   return;
 };
-const LoginMessage: React.FC<{
-  content: string;
-}> = ({ content }) => {
-  return (
-    <Alert
-      style={{
-        marginBottom: 24,
-      }}
-      message={content}
-      type="error"
-      showIcon
-    />
-  );
-};
-const Login: React.FC = () => {
-  const [userLoginState] = useState<API.LoginResult>({});
+
+const Register: React.FC = () => {
   const [type, setType] = useState<string>('account');
-  const { setInitialState } = useModel('@@initialState');
   const { styles } = useStyles();
 
-  const handleSubmit = async (values: API.UserLoginRequest) => {
+  // 表单提交
+  const handleSubmit = async (values: API.UserRegisterRequest) => {
+    const { userPassword, checkPassword } = values;
+    // 校验
+    if (userPassword !== checkPassword) {
+      message.error('两次输入的密码不一致');
+      return;
+    }
     try {
       // 登录
-      const res = await userLoginUsingPost({
-        ...values,
-      });
-      if (res.data) {
-        const defaultLoginSuccessMessage = '登录成功！';
+      const res = await userRegisterUsingPost(values);
+      if (res.code === 0) {
+        const defaultLoginSuccessMessage = '注册成功！';
         message.success(defaultLoginSuccessMessage);
-        const urlParams = new URL(window.location.href).searchParams;
-        setTimeout(() => {
-          history.push(urlParams.get('redirect') || '/');
-        }, 100);
-        setInitialState({
-          loginUser: res.data,
+        if (!history) return;
+        const { query } = history.location;
+        history.push({
+          pathname: '/user/login',
+          query,
         });
         return;
+      } else {
+        message.error(res.message);
       }
     } catch (error) {
       const defaultLoginFailureMessage = '登录失败，请重试！';
@@ -107,12 +83,12 @@ const Login: React.FC = () => {
       message.error(defaultLoginFailureMessage);
     }
   };
-  const { status, type: loginType } = userLoginState;
+
   return (
     <div className={styles.container}>
       <Helmet>
         <title>
-          {'登录'}- {Settings.title}
+          {'注册'}- {Settings.title}
         </title>
       </Helmet>
       <Lang />
@@ -134,37 +110,24 @@ const Login: React.FC = () => {
             autoLogin: true,
           }}
           onFinish={async (values) => {
-            await handleSubmit(values as API.UserLoginRequest);
+            await handleSubmit(values as API.UserRegisterRequest);
           }}
         >
-          <Tabs
-            activeKey={type}
-            onChange={setType}
-            centered
-            items={[
-              {
-                key: 'account',
-                label: '账户密码登录',
-              },
-            ]}
-          />
-
-          {status === 'error' && loginType === 'account' && (
-            <LoginMessage content={'错误的用户名和密码(admin/ant.design)'} />
-          )}
+          <Tabs activeKey={type} onChange={setType}>
+            <Tabs.TabPane key="account" tab={'账号密码注册'} />
+          </Tabs>
           {type === 'account' && (
             <>
               <ProFormText
                 name="userAccount"
                 fieldProps={{
                   size: 'large',
-                  prefix: <UserOutlined />,
                 }}
-                placeholder={'请输入用户名'}
+                placeholder="请输入账号"
                 rules={[
                   {
                     required: true,
-                    message: '用户名是必填项！',
+                    message: '账号是必填项！',
                   },
                 ]}
               />
@@ -172,13 +135,35 @@ const Login: React.FC = () => {
                 name="userPassword"
                 fieldProps={{
                   size: 'large',
-                  prefix: <LockOutlined />,
                 }}
-                placeholder={'请输入密码'}
+                placeholder="请输入密码"
                 rules={[
                   {
                     required: true,
                     message: '密码是必填项！',
+                  },
+                  {
+                    min: 8,
+                    type: 'string',
+                    message: '长度不能小于 8',
+                  },
+                ]}
+              />
+              <ProFormText.Password
+                name="checkPassword"
+                fieldProps={{
+                  size: 'large',
+                }}
+                placeholder="请再次输入密码"
+                rules={[
+                  {
+                    required: true,
+                    message: '确认密码是必填项！',
+                  },
+                  {
+                    min: 8,
+                    type: 'string',
+                    message: '长度不能小于 8',
                   },
                 ]}
               />
@@ -189,7 +174,7 @@ const Login: React.FC = () => {
               marginBottom: 24,
             }}
           >
-            <Link to="/user/register">还没有账号？去注册</Link>
+            <Link to="/user/login">已有账号? 点击登录</Link>
           </div>
         </LoginForm>
       </div>
@@ -197,4 +182,4 @@ const Login: React.FC = () => {
     </div>
   );
 };
-export default Login;
+export default Register;

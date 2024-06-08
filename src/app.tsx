@@ -1,9 +1,9 @@
-import { AvatarDropdown, AvatarName, Footer, Question } from '@/components';
+import Footer from '@/components/Footer';
+import { Question, SelectLang } from '@/components/RightContent';
 import { getLoginUserUsingGet } from '@/services/lightHouse-api-backend/userController';
-import { LinkOutlined } from '@ant-design/icons';
-import { SettingDrawer } from '@ant-design/pro-components';
 import type { RunTimeLayoutConfig } from '@umijs/max';
-import { Link, history } from '@umijs/max';
+import { history } from '@umijs/max';
+import { AvatarDropdown, AvatarName } from './components/RightContent/AvatarDropdown';
 import { requestConfig } from './requestConfig';
 
 const isDev = process.env.NODE_ENV === 'development';
@@ -21,6 +21,12 @@ export async function getInitialState(): Promise<InitialState> {
     const res = await getLoginUserUsingGet();
     if (res.data) {
       state.loginUser = res.data;
+      // 只有登录成功后在登陆页才跳转
+      if (history.location.pathname === loginPath) {
+        // 登录成功后跳转到首页
+        const urlParams = new URL(window.location.href).searchParams;
+        history.push(urlParams.get('redirect') || '/');
+      }
     }
   } catch (error) {
     history.push(loginPath);
@@ -31,7 +37,7 @@ export async function getInitialState(): Promise<InitialState> {
 // ProLayout 支持的api https://procomponents.ant.design/components/layout
 export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) => {
   return {
-    actionsRender: () => [<Question key="doc" />],
+    actionsRender: () => [<Question key="doc" />, <SelectLang key="SelectLang" />],
     avatarProps: {
       src: initialState?.loginUser?.userAvatar,
       title: <AvatarName />,
@@ -50,7 +56,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
         history.push(loginPath);
       }
     },
-    bgLayoutImgList: [
+    layoutBgImgList: [
       {
         src: 'https://mdn.alipayobjects.com/yuyan_qk0oxh/afts/img/D2LWSqNny4sAAAAAAAAAAAAAFl94AQBr',
         left: 85,
@@ -70,14 +76,14 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
         width: '331px',
       },
     ],
-    links: isDev
-      ? [
-          <Link key="openapi" to="/umi/plugin/openapi" target="_blank">
-            <LinkOutlined />
-            <span>OpenAPI 文档</span>
-          </Link>,
-        ]
-      : [],
+    // links: isDev
+    //   ? [
+    //       <Link key="openapi" to="/umi/plugin/openapi" target="_blank">
+    //         <LinkOutlined />
+    //         <span>OpenAPI 文档</span>
+    //       </Link>,
+    //     ]
+    //   : [],
     menuHeaderRender: undefined,
     // 自定义 403 页面
     // unAccessible: <div>unAccessible</div>,
@@ -87,19 +93,17 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
       return (
         <>
           {children}
-          {isDev && (
-            <SettingDrawer
-              disableUrlParams
-              enableDarkTheme
-              settings={initialState?.settings}
-              onSettingChange={(settings) => {
-                setInitialState((preInitialState) => ({
-                  ...preInitialState,
-                  settings,
-                }));
-              }}
-            />
-          )}
+          {/*<SettingDrawer*/}
+          {/*    disableUrlParams*/}
+          {/*    enableDarkTheme*/}
+          {/*    settings={initialState?.settings}*/}
+          {/*    onSettingChange={(settings) => {*/}
+          {/*        setInitialState((preInitialState) => ({*/}
+          {/*            ...preInitialState,*/}
+          {/*            settings,*/}
+          {/*        }));*/}
+          {/*    }}*/}
+          {/*/>*/}
         </>
       );
     },

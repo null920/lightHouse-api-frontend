@@ -5,15 +5,15 @@ declare namespace API {
     message?: string;
   };
 
-  type BaseResponseInt_ = {
-    code?: number;
-    data?: number;
-    message?: string;
-  };
-
   type BaseResponseInterfaceInfo_ = {
     code?: number;
     data?: InterfaceInfo;
+    message?: string;
+  };
+
+  type BaseResponseListInterfaceInfoVO_ = {
+    code?: number;
+    data?: InterfaceInfoVO[];
     message?: string;
   };
 
@@ -41,21 +41,15 @@ declare namespace API {
     message?: string;
   };
 
-  type BaseResponsePagePost_ = {
-    code?: number;
-    data?: PagePost_;
-    message?: string;
-  };
-
-  type BaseResponsePagePostVO_ = {
-    code?: number;
-    data?: PagePostVO_;
-    message?: string;
-  };
-
   type BaseResponsePageUser_ = {
     code?: number;
     data?: PageUser_;
+    message?: string;
+  };
+
+  type BaseResponsePageUserInterfaceInfo_ = {
+    code?: number;
+    data?: PageUserInterfaceInfo_;
     message?: string;
   };
 
@@ -65,21 +59,15 @@ declare namespace API {
     message?: string;
   };
 
-  type BaseResponsePostVO_ = {
-    code?: number;
-    data?: PostVO;
-    message?: string;
-  };
-
-  type BaseResponseString_ = {
-    code?: number;
-    data?: string;
-    message?: string;
-  };
-
   type BaseResponseUser_ = {
     code?: number;
     data?: User;
+    message?: string;
+  };
+
+  type BaseResponseUserInterfaceInfo_ = {
+    code?: number;
+    data?: UserInterfaceInfo;
     message?: string;
   };
 
@@ -87,17 +75,6 @@ declare namespace API {
     code?: number;
     data?: UserVO;
     message?: string;
-  };
-
-  type checkUsingGETParams = {
-    /** echostr */
-    echostr?: string;
-    /** nonce */
-    nonce?: string;
-    /** signature */
-    signature?: string;
-    /** timestamp */
-    timestamp?: string;
   };
 
   type DeleteRequest = {
@@ -109,12 +86,12 @@ declare namespace API {
     id?: number;
   };
 
-  type getPostVOByIdUsingGETParams = {
+  type getUserByIdUsingGETParams = {
     /** id */
     id?: number;
   };
 
-  type getUserByIdUsingGETParams = {
+  type getUserInterfaceInfoByIdUsingGETParams = {
     /** id */
     id?: number;
   };
@@ -172,6 +149,23 @@ declare namespace API {
     url?: string;
   };
 
+  type InterfaceInfoVO = {
+    createTime?: string;
+    deleted?: number;
+    description?: string;
+    id?: number;
+    method?: string;
+    name?: string;
+    requestHeader?: string;
+    requestParams?: string;
+    responseHeader?: string;
+    status?: number;
+    totalNum?: number;
+    updateTime?: string;
+    url?: string;
+    userId?: number;
+  };
+
   type listInterfaceInfoByPageUsingGETParams = {
     current?: number;
     description?: string;
@@ -186,6 +180,19 @@ declare namespace API {
     sortOrder?: string;
     status?: number;
     url?: string;
+    userId?: number;
+  };
+
+  type listUserInterfaceInfoByPageUsingGETParams = {
+    current?: number;
+    id?: number;
+    interfaceInfoId?: number;
+    leftInvokeNum?: number;
+    pageSize?: number;
+    sortField?: string;
+    sortOrder?: string;
+    status?: number;
+    totalInvokeNum?: number;
     userId?: number;
   };
 
@@ -217,32 +224,6 @@ declare namespace API {
     total?: number;
   };
 
-  type PagePost_ = {
-    countId?: string;
-    current?: number;
-    maxLimit?: number;
-    optimizeCountSql?: boolean;
-    orders?: OrderItem[];
-    pages?: number;
-    records?: Post[];
-    searchCount?: boolean;
-    size?: number;
-    total?: number;
-  };
-
-  type PagePostVO_ = {
-    countId?: string;
-    current?: number;
-    maxLimit?: number;
-    optimizeCountSql?: boolean;
-    orders?: OrderItem[];
-    pages?: number;
-    records?: PostVO[];
-    searchCount?: boolean;
-    size?: number;
-    total?: number;
-  };
-
   type PageUser_ = {
     countId?: string;
     current?: number;
@@ -251,6 +232,19 @@ declare namespace API {
     orders?: OrderItem[];
     pages?: number;
     records?: User[];
+    searchCount?: boolean;
+    size?: number;
+    total?: number;
+  };
+
+  type PageUserInterfaceInfo_ = {
+    countId?: string;
+    current?: number;
+    maxLimit?: number;
+    optimizeCountSql?: boolean;
+    orders?: OrderItem[];
+    pages?: number;
+    records?: UserInterfaceInfo[];
     searchCount?: boolean;
     size?: number;
     total?: number;
@@ -267,91 +261,6 @@ declare namespace API {
     searchCount?: boolean;
     size?: number;
     total?: number;
-  };
-
-  type Post = {
-    content?: string;
-    createTime?: string;
-    favourNum?: number;
-    id?: number;
-    isDelete?: number;
-    tags?: string;
-    thumbNum?: number;
-    title?: string;
-    updateTime?: string;
-    userId?: number;
-  };
-
-  type PostAddRequest = {
-    content?: string;
-    tags?: string[];
-    title?: string;
-  };
-
-  type PostEditRequest = {
-    content?: string;
-    id?: number;
-    tags?: string[];
-    title?: string;
-  };
-
-  type PostFavourAddRequest = {
-    postId?: number;
-  };
-
-  type PostFavourQueryRequest = {
-    current?: number;
-    pageSize?: number;
-    postQueryRequest?: PostQueryRequest;
-    sortField?: string;
-    sortOrder?: string;
-    userId?: number;
-  };
-
-  type PostQueryRequest = {
-    content?: string;
-    current?: number;
-    favourUserId?: number;
-    id?: number;
-    notId?: number;
-    orTags?: string[];
-    pageSize?: number;
-    searchText?: string;
-    sortField?: string;
-    sortOrder?: string;
-    tags?: string[];
-    title?: string;
-    userId?: number;
-  };
-
-  type PostThumbAddRequest = {
-    postId?: number;
-  };
-
-  type PostUpdateRequest = {
-    content?: string;
-    id?: number;
-    tags?: string[];
-    title?: string;
-  };
-
-  type PostVO = {
-    content?: string;
-    createTime?: string;
-    favourNum?: number;
-    hasFavour?: boolean;
-    hasThumb?: boolean;
-    id?: number;
-    tagList?: string[];
-    thumbNum?: number;
-    title?: string;
-    updateTime?: string;
-    user?: UserVO;
-    userId?: number;
-  };
-
-  type uploadFileUsingPOSTParams = {
-    biz?: string;
   };
 
   type User = {
@@ -378,9 +287,30 @@ declare namespace API {
     userRole?: string;
   };
 
-  type userLoginByWxOpenUsingGETParams = {
-    /** code */
-    code: string;
+  type UserInterfaceInfo = {
+    createTime?: string;
+    deleted?: number;
+    id?: number;
+    interfaceInfoId?: number;
+    leftInvokeNum?: number;
+    status?: number;
+    totalInvokeNum?: number;
+    updateTime?: string;
+    userId?: number;
+  };
+
+  type UserInterfaceInfoAddRequest = {
+    interfaceInfoId?: number;
+    leftInvokeNum?: number;
+    totalInvokeNum?: number;
+    userId?: number;
+  };
+
+  type UserInterfaceInfoUpdateRequest = {
+    id?: number;
+    leftInvokeNum?: number;
+    status?: number;
+    totalInvokeNum?: number;
   };
 
   type UserLoginRequest = {

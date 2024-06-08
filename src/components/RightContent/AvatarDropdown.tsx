@@ -1,14 +1,12 @@
-import { outLogin } from '@/services/ant-design-pro/api';
+import { userLogoutUsingPost } from '@/services/lightHouse-api-backend/userController';
 import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import { useEmotionCss } from '@ant-design/use-emotion-css';
 import { history, useModel } from '@umijs/max';
-import { Spin } from 'antd';
-import { createStyles } from 'antd-style';
 import { stringify } from 'querystring';
 import type { MenuInfo } from 'rc-menu/lib/interface';
 import React, { useCallback } from 'react';
 import { flushSync } from 'react-dom';
 import HeaderDropdown from '../HeaderDropdown';
-import {userLogoutUsingPost} from "@/services/lightHouse-api-backend/userController";
 
 export type GlobalHeaderRightProps = {
   menu?: boolean;
@@ -21,30 +19,12 @@ export const AvatarName = () => {
   return <span className="anticon">{loginUser?.userName}</span>;
 };
 
-const useStyles = createStyles(({ token }) => {
-  return {
-    action: {
-      display: 'flex',
-      height: '48px',
-      marginLeft: 'auto',
-      overflow: 'hidden',
-      alignItems: 'center',
-      padding: '0 8px',
-      cursor: 'pointer',
-      borderRadius: token.borderRadius,
-      '&:hover': {
-        backgroundColor: token.colorBgTextHover,
-      },
-    },
-  };
-});
-
 export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu, children }) => {
   /**
    * 退出登录，并且将当前的 url 保存
    */
   const loginOut = async () => {
-    await outLogin();
+    await userLogoutUsingPost();
     const { search, pathname } = window.location;
     const urlParams = new URL(window.location.href).searchParams;
     /** 此方法会跳转到 redirect 参数所在的位置 */
@@ -59,8 +39,21 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu, childre
       });
     }
   };
-  const { styles } = useStyles();
-
+  const actionClassName = useEmotionCss(({ token }) => {
+    return {
+      display: 'flex',
+      height: '48px',
+      marginLeft: 'auto',
+      overflow: 'hidden',
+      alignItems: 'center',
+      padding: '0 8px',
+      cursor: 'pointer',
+      borderRadius: token.borderRadius,
+      '&:hover': {
+        backgroundColor: token.colorBgTextHover,
+      },
+    };
+  });
   const { initialState, setInitialState } = useModel('@@initialState');
 
   const onMenuClick = useCallback(
@@ -68,9 +61,9 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu, childre
       const { key } = event;
       if (key === 'logout') {
         flushSync(() => {
-          setInitialState((s) => ({ ...s, currentUser: undefined }));
+          setInitialState((s: any) => ({ ...s, loginUser: undefined }));
         });
-        userLogoutUsingPost();
+        loginOut();
         return;
       }
       history.push(`/account/${key}`);
@@ -78,27 +71,27 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu, childre
     [setInitialState],
   );
 
-  const loading = (
-    <span className={styles.action}>
-      <Spin
-        size="small"
-        style={{
-          marginLeft: 8,
-          marginRight: 8,
-        }}
-      />
-    </span>
-  );
+  // const loading = (
+  //   <span className={actionClassName}>
+  //     <Spin
+  //       size="small"
+  //       style={{
+  //         marginLeft: 8,
+  //         marginRight: 8,
+  //       }}
+  //     />
+  //   </span>
+  // );
 
-  if (!initialState) {
-    return loading;
-  }
+  // if (!initialState) {
+  //   return loading;
+  // }
 
   const { loginUser } = initialState;
 
-  if (!loginUser || !loginUser.userName) {
-    return loading;
-  }
+  // if (!loginUser || !loginUser.userName) {
+  //   return loading;
+  // }
 
   const menuItems = [
     ...(menu
