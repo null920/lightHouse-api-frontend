@@ -25,7 +25,7 @@ interface ResponseStructure {
  * @doc https://umijs.org/docs/max/request#配置
  */
 export const requestConfig: RequestConfig = {
-  baseURL: 'http://localhost:9527',
+  baseURL: 'https://api-end.null920.top/',
   withCredentials: true,
   // 请求拦截器
   requestInterceptors: [

@@ -35,6 +35,7 @@ const Index: React.FC = () => {
   const [imageLoad, setImageLoad] = useState(false);
   const [content, setContent] = useState<any[]>();
   const [isVisible, setIsVisible] = useState(false);
+  const [hasPicture, setHasPicture] = useState(false);
 
   const loadData = async () => {
     if (!params.id) {
@@ -80,19 +81,18 @@ const Index: React.FC = () => {
           console.log(responseObject.data);
           setContent(responseObject.data);
           setIsVisible(true);
-        }
-        if (content === null) {
-          setInvokeRes(res.data);
-        }
-        if (
+        } else if (
           responseObject &&
           responseObject.url !== null &&
           responseObject.url !== undefined &&
           responseObject.url !== ''
         ) {
+          setHasPicture(true);
           setUrl(responseObject.url);
           setImageLoad(true);
           console.log(responseObject.url);
+        } else {
+          setInvokeRes(res.data);
         }
       } catch (error) {}
       message.success('请求成功');
@@ -164,20 +164,22 @@ const Index: React.FC = () => {
           />
         </Card>
       )}
-      <Card>
-        <Spin spinning={imageLoad}>
-          <Image
-            width={600}
-            src={urlRes}
-            onLoad={handleImageLoad} // 监听图片加载完成事件
-          />
-        </Spin>
-        {imageLoad && (
-          <div style={{ textAlign: 'center', marginTop: '10px' }}>
-            <h1>图片加载中请耐心等待</h1>
-          </div>
-        )}
-      </Card>
+      {hasPicture && (
+        <Card>
+          <Spin spinning={imageLoad}>
+            <Image
+              width={600}
+              src={urlRes}
+              onLoad={handleImageLoad} // 监听图片加载完成事件
+            />
+          </Spin>
+          {imageLoad && (
+            <div style={{ textAlign: 'center', marginTop: '10px' }}>
+              <h1>图片加载中请耐心等待</h1>
+            </div>
+          )}
+        </Card>
+      )}
     </PageContainer>
   );
 };
